@@ -1,0 +1,27 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: analisis_tweets_app
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - ENV=production
+      - MONGO_URI=mongodb://mongo:27017/tu_base_de_datos
+    command: python app.py
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

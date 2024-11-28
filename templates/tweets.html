@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tweets COVID-19</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-dark mb-3">
+        <div class="container">
+            <a class="navbar-brand brand-title" href="#">
+                <i class="fab fa-twitter brand-icon"></i>
+                <span class="brand-text">Tweets COVID-19</span>
+            </a>
+            <a href="/logout" class="btn btn-danger">
+                <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div id="tweets-container">
+                    {% for tweet in tweets %}
+                    <div class="tweet-card">
+                        <div class="tweet-header">
+                            <div class="tweet-user-info">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ loop.index }}" class="tweet-avatar" alt="Avatar">
+                                <div class="user-details">
+                                    <span class="user-name">{{ users[loop.index0 % users|length].name }}</span>
+                                    <span class="user-handle">{{ users[loop.index0 % users|length].handle }}</span>
+                                </div>
+                            </div>
+                            <div class="tweet-time">
+                                <i class="fas fa-clock"></i>
+                                <span>{{ range(1, 24) | random }}h</span>
+                            </div>
+                        </div>
+                        <div class="tweet-content">
+                            <p>{{ tweet.text }}</p>
+                        </div>
+                        <div class="tweet-actions">
+                            <div class="tweet-action">
+                                <i class="far fa-comment"></i>
+                                <span class="action-count">{{ range(1000, 20000) | random }}</span>
+                            </div>
+                            <div class="tweet-action">
+                                <i class="fas fa-retweet"></i>
+                                <span class="action-count">{{ range(1000, 20000) | random }}</span>
+                            </div>
+                            <div class="tweet-action">
+                                <i class="far fa-heart"></i>
+                                <span class="action-count">{{ range(1000, 20000) | random }}</span>
+                            </div>
+                            <div class="tweet-action">
+                                <i class="far fa-share-square"></i>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div id="loading" class="text-center d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="user-info-card">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ session['user'] }}" alt="Avatar" class="user-avatar">
+                    <h4>Bienvenido, {{ session['user'] }}</h4>
+                    
+                    <div class="export-buttons mt-4">
+                        <button onclick="exportarPDF()" class="btn btn-danger w-100 mb-2">
+                            <i class="fas fa-file-pdf me-2"></i>Descargar PDF
+                        </button>
+                        <button onclick="exportarExcel()" class="btn btn-success w-100">
+                            <i class="fas fa-file-excel me-2"></i>Descargar Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
+    <script>
+        let offset = 15;
+        let loading = false;
+        const limit = 15;
+
+        window.addEventListener('scroll', function() {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                if (!loading) {
+                    cargarMasTweets();
+                }
+            }
+        });
+
+        async function cargarMasTweets() {
+            if (loading) return;
+            
+            try {
+                loading = true;
+                const loadingDiv = document.getElementById('loading');
+                if (loadingDiv) loadingDiv.classList.remove('d-none');
+                
+                const response = await fetch(`/api/tweets?offset=${offset}&limit=${limit}`);
+                if (!response.ok) throw new Error('Error al cargar tweets');
+                
+                const newTweets = await response.json();
+                
+                if (newTweets.length === 0) {
+                    if (loadingDiv) loadingDiv.innerHTML = 'No hay más tweets';
+                    return;
+                }
+                
+                const container = document.getElementById('tweets-container');
+                
+                newTweets.forEach(tweet => {
+                    const randomUser = users[Math.floor(Math.random() * users.length)];
+                    const tweetElement = createTweetElement(tweet, randomUser);
+                    container.appendChild(tweetElement);
+                });
+                
+                offset += newTweets.length;
+            } catch (error) {
+                console.error('Error:', error);
+                const loadingDiv = document.getElementById('loading');
+                if (loadingDiv) loadingDiv.innerHTML = 'Error al cargar más tweets';
+            } finally {
+                loading = false;
+            }
+        }
+
+        function createTweetElement(tweet, user) {
+            const div = document.createElement('div');
+            div.className = 'tweet-card';
+            div.innerHTML = `
+                <div class="tweet-header">
+                    <div class="tweet-user-info">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${user.handle}" class="tweet-avatar" alt="Avatar">
+                        <div class="user-details">
+                            <span class="user-name">${user.name}</span>
+                            <span class="user-handle">${user.handle}</span>
+                        </div>
+                    </div>
+                    <div class="tweet-time">
+                        <i class="fas fa-clock"></i>
+                        <span>${Math.floor(Math.random() * 24)}h</span>
+                    </div>
+                </div>
+                <div class="tweet-content">
+                    <p>${tweet.text}</p>
+                </div>
+            `;
+            return div;
+        }
+
+        async function exportarPDF() {
+            // Asegurarnos que jsPDF está disponible globalmente
+            window.jsPDF = window.jspdf.jsPDF;
+            
+            const doc = new jsPDF();
+            const tweets = document.querySelectorAll('.tweet-card');
+            let yPos = 20;
+
+            doc.setFontSize(20);
+            doc.text('Tweets COVID-19', 20, yPos);
+            doc.setFontSize(12);
+
+            tweets.forEach((tweet, index) => {
+                if (yPos > 250) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+                const texto = tweet.querySelector('.tweet-content p').textContent;
+                doc.text(texto, 20, yPos, {
+                    maxWidth: 170
+                });
+                yPos += 30;
+            });
+
+            doc.save('tweets-covid19.pdf');
+        }
+
+        function exportarExcel() {
+            const tweets = Array.from(document.querySelectorAll('.tweet-card'))
+                .map(tweet => ({
+                    texto: tweet.querySelector('.tweet-content p').textContent,
+                    fecha: new Date().toLocaleDateString(),
+                    interacciones: tweet.querySelector('.action-count').textContent
+                }));
+
+            const ws = XLSX.utils.json_to_sheet(tweets);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Tweets");
+            XLSX.writeFile(wb, "tweets-covid19.xlsx");
+        }
+    </script>
+</body>
+</html> 
+</html> 

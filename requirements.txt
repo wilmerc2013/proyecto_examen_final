@@ -1,0 +1,6 @@
+Flask
+pandas
+flask-cors
+pymongo
+flask-bcrypt
+flask-session

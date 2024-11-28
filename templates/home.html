@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Inicio - Tweets COVID-19</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <a class="navbar-brand brand-title" href="#">
+                <i class="fab fa-twitter brand-icon"></i>
+                <span class="brand-text">Tweets COVID-19</span>
+            </a>
+            <div class="nav-buttons">
+                <a href="/login" class="btn btn-outline-primary">Iniciar Sesión</a>
+                <a href="/register" class="btn btn-primary">Registrar</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="display-4 fw-bold">Descubre lo que está pasando con COVID-19 en tiempo real</h1>
+                    <p class="lead mb-4">Únete a la conversación global sobre la pandemia. Mantente informado con tweets en tiempo real, análisis de datos y tendencias actuales.</p>
+                    <div class="features">
+                        <div class="feature-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Análisis en tiempo real</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-globe"></i>
+                            <span>Cobertura global</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-users"></i>
+                            <span>Comunidad activa</span>
+                        </div>
+                    </div>
+                    <div class="cta-buttons">
+                        <a href="/register" class="btn btn-primary btn-lg">Únete ahora</a>
+                        <a href="#learn-more" class="btn btn-outline-light btn-lg">Saber más</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="hero-image">
+                        <img src="{{ url_for('static', filename='images/twitter.png') }}" alt="Twitter Logo" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-section">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <h3>1M+</h3>
+                        <p>Tweets analizados</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <h3>150+</h3>
+                        <p>Países representados</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <h3>24/7</h3>
+                        <p>Monitoreo en tiempo real</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="learn-more" class="about-section">
+        <div class="container">
+            <h2 class="text-center mb-5">Sobre el Proyecto</h2>
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <div class="about-content">
+                        <p class="lead">
+                            Tweets COVID-19 es una plataforma de análisis de datos que recopila y analiza tweets relacionados con la pandemia de COVID-19 en tiempo real.
+                        </p>
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <i class="fas fa-chart-bar"></i>
+                                <h4>Análisis de Sentimientos</h4>
+                                <p>Analizamos el sentimiento general de los tweets para entender la percepción pública.</p>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-globe-americas"></i>
+                                <h4>Cobertura Global</h4>
+                                <p>Monitoreamos tweets de todo el mundo para obtener una perspectiva global.</p>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-database"></i>
+                                <h4>Big Data</h4>
+                                <p>Procesamos millones de tweets diariamente para obtener insights valiosos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
